@@ -1,0 +1,209 @@
+<div class="booking-form-container">
+  <h2>Flight Booking</h2>
+
+  <form (submit)="submitForm(); $event.preventDefault()">
+    <section class="passenger-section">
+      <h3>Passenger Information</h3>
+
+      <div class="form-field">
+        <label>
+          Passenger Name:
+          <input
+            type="text"
+            [field]="bookingForm.passengerName"
+            placeholder="Enter full name"
+          />
+        </label>
+        @for (error of getErrors(bookingForm.passengerName); track error.kind) {
+        <ul class="error-list">
+          <li class="error-message">{{ error.message }}</li>
+        </ul>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label>
+            Departure Date:
+            <input type="date" [field]="bookingForm.departureDate" />
+          </label>
+          @for (error of getErrors(bookingForm.departureDate); track error.kind)
+          {
+          <ul class="error-list">
+            <li class="error-message">{{ error.message }}</li>
+          </ul>
+          }
+        </div>
+
+        @if (bookingForm.returnDate) {
+        <div class="form-field">
+          <label>
+            Return Date:
+            <input type="date" [field]="bookingForm.returnDate" />
+          </label>
+          @for (error of getErrors(bookingForm.returnDate); track error.kind) {
+          <ul class="error-list">
+            <li class="error-message">{{ error.message }}</li>
+          </ul>
+          }
+        </div>
+        }
+      </div>
+    </section>
+
+    <section class="flights-section">
+      <h3>Flights</h3>
+
+      @for (flight of bookingForm.flights; track flight.id()) {
+      <fieldset class="flight-fieldset">
+        <legend>
+          {{ $index === 0 ? "Outbound Flight" : "Return Flight" }}
+        </legend>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label>
+              Flight Number:
+              <input
+                type="text"
+                placeholder="e.g., AA123"
+                [field]="flight.flightNumber"
+              />
+            </label>
+            @for (error of getErrors(flight.flightNumber); track error.kind) {
+            <ul class="error-list">
+              <li class="error-message">{{ error.message }}</li>
+            </ul>
+            }
+          </div>
+
+          <div class="form-field">
+            <label>
+              Seat Number:
+              <input
+                type="text"
+                placeholder="e.g., A12"
+                [field]="flight.seatNumber"
+              />
+            </label>
+            @for (error of getErrors(flight.seatNumber); track error.kind) {
+            <ul class="error-list">
+              <li class="error-message">{{ error.message }}</li>
+            </ul>
+            }
+          </div>
+        </div>
+
+        <div class="aircraft-section">
+          <h4>Aircraft Details</h4>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>
+                Aircraft Model:
+                <input
+                  type="text"
+                  placeholder="e.g., Boeing 737"
+                  [field]="flight.aircraft.model"
+                />
+              </label>
+              @for (error of getErrors(flight.aircraft.model); track error.kind)
+              {
+              <ul class="error-list">
+                <li class="error-message">{{ error.message }}</li>
+              </ul>
+              }
+            </div>
+
+            <div class="form-field">
+              <label>
+                Capacity:
+                <input
+                  type="number"
+                  placeholder="e.g., 180"
+                  [field]="flight.aircraft.capacity"
+                />
+              </label>
+              @for (error of getErrors(flight.aircraft.capacity); track
+              error.kind) {
+              <ul class="error-list">
+                <li class="error-message">{{ error.message }}</li>
+              </ul>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label>
+              Class:
+              <select [field]="flight.class">
+                <option value="">Select a class</option>
+                @for (flightClass of flightClasses; track flightClass) {
+                <option [value]="flightClass">{{ flightClass }}</option>
+                }
+              </select>
+            </label>
+            @for (error of getErrors(flight.class); track error.kind) {
+            <ul class="error-list">
+              <li class="error-message">{{ error.message }}</li>
+            </ul>
+            }
+          </div>
+
+          <div class="form-field">
+            <label>
+              Amount:
+              <input
+                type="number"
+                placeholder="e.g., 299"
+                [field]="flight.amount"
+              />
+            </label>
+            @for (error of getErrors(flight.amount); track error.kind) {
+            <ul class="error-list">
+              <li class="error-message">{{ error.message }}</li>
+            </ul>
+            }
+          </div>
+        </div>
+
+        @if ($index > 0) {
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="removeFlight($index)"
+        >
+          Remove Return Flight
+        </button>
+        }
+      </fieldset>
+      } @if (bookingForm.flights.length < 2) {
+      <button type="button" class="btn btn-secondary" (click)="addFlight()">
+        Add Return Flight
+      </button>
+      }
+    </section>
+
+    <div class="form-actions">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="isFormInvalid()"
+      >
+        Submit Booking
+      </button>
+    </div>
+  </form>
+
+  <details class="debug-section">
+    <summary>Form Debug Info</summary>
+    <div class="debug-content">
+      <h4>Form Valid: {{ bookingForm().valid() }}</h4>
+      <h4>Form Touched: {{ bookingForm().touched() }}</h4>
+      <h4>Booking Form Value:</h4>
+      <pre>{{ bookingForm().value() | json }}</pre>
+    </div>
+  </details>
+</div>
